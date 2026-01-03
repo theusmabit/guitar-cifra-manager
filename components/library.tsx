@@ -439,8 +439,8 @@ export function Library({
               className="bg-card border-border hover:shadow-md transition-all cursor-pointer group relative"
               onClick={() => onViewSong(song)}
             >
-              <CardContent className="p-4">
-                <div className="absolute top-4 right-4">
+              <CardContent className="p-6">
+                <div className="absolute top-6 right-6">
                   <Button
                     variant="ghost"
                     size="icon"
