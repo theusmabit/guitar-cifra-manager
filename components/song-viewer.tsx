@@ -234,39 +234,45 @@ export function SongViewer({
               </div>
 
               {twoColumnMode ? (
-                <Card className="rounded-sm border-border shadow-none mt-4">
-                  <CardContent className="p-6 md:p-8">
-                    <div className="grid grid-cols-2 gap-8">
-                      <div>
-                        <pre
-                          className="font-mono whitespace-pre-wrap leading-relaxed"
-                          style={{ fontSize: `${textSize}px` }}
-                        >
-                          {renderLyricsWithChords(getColumnContent(transposedContent, 0))}
-                        </pre>
+                <div className="mt-4 space-y-4">
+                  <MusicPlayer song={song} />
+                  <Card className="rounded-sm border-border shadow-none">
+                    <CardContent className="p-6 md:p-8">
+                      <div className="grid grid-cols-2 gap-8">
+                        <div>
+                          <pre
+                            className="font-mono whitespace-pre-wrap leading-relaxed"
+                            style={{ fontSize: `${textSize}px` }}
+                          >
+                            {renderLyricsWithChords(getColumnContent(transposedContent, 0))}
+                          </pre>
+                        </div>
+                        <div>
+                          <pre
+                            className="font-mono whitespace-pre-wrap leading-relaxed"
+                            style={{ fontSize: `${textSize}px` }}
+                          >
+                            {renderLyricsWithChords(getColumnContent(transposedContent, 1))}
+                          </pre>
+                        </div>
                       </div>
-                      <div>
-                        <pre
-                          className="font-mono whitespace-pre-wrap leading-relaxed"
-                          style={{ fontSize: `${textSize}px` }}
-                        >
-                          {renderLyricsWithChords(getColumnContent(transposedContent, 1))}
-                        </pre>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </div>
               ) : (
-                <Card className="rounded-sm border-border shadow-none mt-4">
-                  <CardContent className="p-6 md:p-8">
-                    <pre
-                      className="font-mono whitespace-pre-wrap leading-relaxed"
-                      style={{ fontSize: `${textSize}px` }}
-                    >
-                      {renderLyricsWithChords(transposedContent)}
-                    </pre>
-                  </CardContent>
-                </Card>
+                <div className="mt-4 space-y-4">
+                  <MusicPlayer song={song} />
+                  <Card className="rounded-sm border-border shadow-none">
+                    <CardContent className="p-6 md:p-8">
+                      <pre
+                        className="font-mono whitespace-pre-wrap leading-relaxed"
+                        style={{ fontSize: `${textSize}px` }}
+                      >
+                        {renderLyricsWithChords(transposedContent)}
+                      </pre>
+                    </CardContent>
+                  </Card>
+                </div>
               )}
             </div>
 
@@ -486,11 +492,6 @@ function ToolsPanel({
     <div className="space-y-4">
       <Card className="rounded-sm border-border shadow-none">
         <CardContent className="p-4 space-y-6">
-          {/* Music Player moved here */}
-          <div className="pb-2 border-b border-border">
-            <MusicPlayer song={song} />
-          </div>
-
           {/* Transpose Control */}
           <div className="space-y-2">
             <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Transpose</label>
