@@ -105,7 +105,7 @@ export function Homepage({
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 max-w-[1400px] mx-auto">
             {songs.slice(0, 4).map((song, index) => {
               const chords = extractChords(song.content)
               const difficulty = getDifficulty(song.content)
