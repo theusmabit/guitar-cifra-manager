@@ -439,7 +439,7 @@ export function Library({
               className="bg-card border border-border/40 hover:shadow-lg transition-all cursor-pointer group relative rounded-2xl overflow-hidden"
               onClick={() => onViewSong(song)}
             >
-              <CardContent className="p-5 pt-6 flex flex-col h-full">
+              <CardContent className="p-5 pt-6 flex flex-col h-full relative">
                 <div className="absolute top-6 right-5 z-10">
                   <Button
                     variant="ghost"
