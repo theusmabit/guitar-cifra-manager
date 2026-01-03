@@ -174,7 +174,7 @@ export function GuitarTabsManager() {
     <SidebarProvider>
       <AppSidebar currentView={currentView} onNavigate={setCurrentView} />
       <SidebarInset>
-        <TopBar onSearch={handleSearch} onNavigateHome={() => setCurrentView("home")} />
+        <TopBar onSearch={handleSearch} onNavigateHome={() => setCurrentView("home")} songs={songs} onViewSong={handleViewSong} />
         <main className="flex flex-1 flex-col">{renderContent()}</main>
       </SidebarInset>
     </SidebarProvider>
