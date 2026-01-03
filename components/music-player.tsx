@@ -124,14 +124,18 @@ export function MusicPlayer({ song, audioUrl }: MusicPlayerProps) {
           </div>
 
           {/* Vertical Volume Popover */}
-          <div className="shrink-0">
+          <div className="shrink-0 flex items-center gap-1.5">
+            <Volume2 className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                  <Volume2 className="w-4 h-4 text-muted-foreground" />
-                </Button>
+                <div className="h-8 w-2 bg-secondary/50 rounded-full cursor-pointer relative overflow-hidden group hover:bg-secondary transition-colors border border-border/50">
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 bg-primary/60 transition-all group-hover:bg-primary"
+                    style={{ height: `${volume}%` }}
+                  />
+                </div>
               </PopoverTrigger>
-              <PopoverContent side="top" align="center" className="w-12 p-3 bg-card border-border">
+              <PopoverContent side="top" align="center" className="w-12 p-3 bg-card border-border shadow-lg">
                 <div className="h-32 flex flex-col items-center gap-2">
                   <Slider
                     orientation="vertical"
