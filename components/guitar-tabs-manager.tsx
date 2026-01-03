@@ -76,6 +76,11 @@ export function GuitarTabsManager() {
     setCurrentView("song")
   }
 
+  const handleArtistClick = (artist: string) => {
+    setSearchQuery(artist)
+    setCurrentView("library")
+  }
+
   const handleAddFolder = (name: string) => {
     const newFolder: Folder = {
       id: crypto.randomUUID(),
@@ -163,7 +168,20 @@ export function GuitarTabsManager() {
       case "add":
         return <AddSong onAddSong={handleAddSong} onImportSongs={(s) => setSongs([...songs, ...s])} />
       case "song":
-        return selectedSong ? <SongViewer song={selectedSong} onUpdateSong={handleUpdateSong} onBack={() => setCurrentView("library")} /> : null
+        return selectedSong ? (
+          <SongViewer
+            song={selectedSong}
+            onUpdateSong={handleUpdateSong}
+            onBack={() => setCurrentView("library")}
+            folders={folders}
+            onAddSongToFolder={handleAddSongToFolder}
+            onNavigateToFolder={(folderId) => {
+              setSelectedFolder(folderId)
+              setCurrentView("folder-detail")
+            }}
+            onArtistClick={handleArtistClick}
+          />
+        ) : null
       case "settings":
         return <SettingsView songs={songs} folders={folders} />
       default:

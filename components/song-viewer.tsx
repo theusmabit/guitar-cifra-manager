@@ -28,14 +28,28 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import type { Song, Folder } from "@/lib/types"
 
 interface SongViewerProps {
   song: Song
   onUpdateSong: (song: Song) => void
   onBack: () => void
+  folders?: Folder[]
+  onAddSongToFolder?: (songId: string, folderId: string) => void
+  onNavigateToFolder?: (folderId: string) => void
+  onArtistClick?: (artist: string) => void
 }
 
-export function SongViewer({ song, onUpdateSong, onBack }: SongViewerProps) {
+export function SongViewer({
+  song,
+  onUpdateSong,
+  onBack,
+  folders = [],
+  onAddSongToFolder,
+  onNavigateToFolder,
+  onArtistClick,
+}: SongViewerProps) {
   const [transpose, setTranspose] = useState(0)
   const [autoScroll, setAutoScroll] = useState(false)
   const [scrollSpeed, setScrollSpeed] = useState(60)
@@ -105,7 +119,26 @@ export function SongViewer({ song, onUpdateSong, onBack }: SongViewerProps) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h1 className="text-4xl font-bold text-foreground mb-1">{song.title}</h1>
-                  <p className="text-lg text-muted-foreground">{song.artist}</p>
+                  <button
+                    onClick={() => onArtistClick?.(song.artist)}
+                    className="text-lg text-muted-foreground hover:text-primary transition-colors text-left"
+                  >
+                    {song.artist}
+                  </button>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {folders
+                      .filter((f) => f.songIds.includes(song.id))
+                      .map((folder) => (
+                        <Badge
+                          key={folder.id}
+                          variant="secondary"
+                          className="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer transition-colors"
+                          onClick={() => onNavigateToFolder?.(folder.id)}
+                        >
+                          {folder.name}
+                        </Badge>
+                      ))}
+                  </div>
                 </div>
               </div>
 
@@ -121,11 +154,32 @@ export function SongViewer({ song, onUpdateSong, onBack }: SongViewerProps) {
                     {isSaved ? "Saved" : "Save"}
                   </Button>
 
-                  <Button variant="outline" size="sm" className="rounded-sm h-9 bg-transparent">
-                    <Plus className="w-3.5 h-3.5 mr-1.5" />
-                    Add to Setlist
-                    <ChevronDown className="w-3.5 h-3.5 ml-1.5" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="rounded-sm h-9 bg-transparent">
+                        <Plus className="w-3.5 h-3.5 mr-1.5" />
+                        Add to page
+                        <ChevronDown className="w-3.5 h-3.5 ml-1.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="bg-card border-border w-48">
+                      {folders.length === 0 ? (
+                        <div className="px-2 py-1.5 text-xs text-muted-foreground">Nenhuma pasta criada</div>
+                      ) : (
+                        folders.map((folder) => (
+                          <DropdownMenuItem
+                            key={folder.id}
+                            className="text-sm focus:bg-accent focus:text-accent-foreground"
+                            onClick={() => onAddSongToFolder?.(song.id, folder.id)}
+                            disabled={folder.songIds.includes(song.id)}
+                          >
+                            {folder.name}
+                            {folder.songIds.includes(song.id) && " (Adicionada)"}
+                          </DropdownMenuItem>
+                        ))
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="flex items-center gap-2">
