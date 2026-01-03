@@ -123,32 +123,17 @@ export function MusicPlayer({ song, audioUrl }: MusicPlayerProps) {
             <span className="text-[10px] text-muted-foreground font-mono w-8 shrink-0">{formatTime(duration)}</span>
           </div>
 
-          {/* Vertical Volume Popover */}
-          <div className="shrink-0 flex items-center gap-1.5">
+          {/* Horizontal Volume Control */}
+          <div className="flex items-center gap-2 min-w-[80px] sm:min-w-[100px]">
             <Volume2 className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-            <Popover>
-              <PopoverTrigger asChild>
-                <div className="h-8 w-2 bg-secondary/50 rounded-full cursor-pointer relative overflow-hidden group hover:bg-secondary transition-colors border border-border/50">
-                  <div 
-                    className="absolute bottom-0 left-0 right-0 bg-primary/60 transition-all group-hover:bg-primary"
-                    style={{ height: `${volume}%` }}
-                  />
-                </div>
-              </PopoverTrigger>
-              <PopoverContent side="top" align="center" className="w-12 p-3 bg-card border-border shadow-lg">
-                <div className="h-32 flex flex-col items-center gap-2">
-                  <Slider
-                    orientation="vertical"
-                    value={[volume]}
-                    max={100}
-                    step={1}
-                    onValueChange={(v) => setVolume(v[0])}
-                    className="h-full"
-                  />
-                  <span className="text-[10px] font-mono text-muted-foreground">{volume}%</span>
-                </div>
-              </PopoverContent>
-            </Popover>
+            <Slider
+              value={[volume]}
+              max={100}
+              step={1}
+              onValueChange={(v) => setVolume(v[0])}
+              className="flex-1 w-16 sm:w-20"
+            />
+            <span className="text-[10px] font-mono text-muted-foreground w-6 shrink-0">{volume}%</span>
           </div>
         </div>
       </CardContent>
