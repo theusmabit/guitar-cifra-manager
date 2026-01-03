@@ -104,7 +104,7 @@ export function Homepage({
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {songs.slice(0, 4).map((song, index) => {
               const chords = extractChords(song.content)
               const difficulty = getDifficulty(song.content)
@@ -117,41 +117,56 @@ export function Homepage({
                   onClick={() => onViewSong(song)}
                 >
                   <CardContent className="p-4">
-                    {song.isFavorite && (
-                      <div className="absolute top-4 right-4">
-                        <Heart className="w-5 h-5 fill-red-500 text-red-500" />
-                      </div>
-                    )}
-
-                    <div className="flex items-start gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Music className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-foreground text-lg mb-0.5 group-hover:text-primary transition-colors truncate leading-tight">
-                          {song.title}
-                        </h3>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onArtistClick?.(song.artist)
-                          }}
-                          className="text-sm text-muted-foreground hover:text-foreground/80 transition-colors cursor-pointer text-left block w-full truncate"
-                        >
-                          {song.artist}
-                        </button>
-                      </div>
+                    <div className="absolute top-4 right-4">
+                      <Heart className={cn("w-5 h-5 text-muted-foreground transition-colors", song.isFavorite && "fill-red-500 text-red-500")} />
                     </div>
 
-                    <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/50">
+                    <div className="w-14 h-14 rounded-xl bg-orange-100 flex items-center justify-center mb-4">
+                      <Music className="w-8 h-8 text-orange-500" />
+                    </div>
+
+                    <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors truncate">
+                      {song.title}
+                    </h3>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onArtistClick?.(song.artist)
+                      }}
+                      className="text-base text-muted-foreground mb-4 hover:text-foreground/80 transition-colors cursor-pointer text-left block w-full truncate"
+                    >
+                      {song.artist}
+                    </button>
+
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {song.tags.slice(0, 2).map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="secondary"
+                          className="bg-orange-50 text-orange-700 hover:bg-orange-100 border-none px-3 py-1 rounded-full text-xs font-medium cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onTagClick?.(tag)
+                          }}
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <div className="pt-4 border-t border-border/40 flex items-center justify-between">
                       <Badge
-                        variant="outline"
-                        className="border-border text-muted-foreground text-[10px] uppercase font-bold tracking-wider"
+                        variant="secondary"
+                        className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-none px-4 py-1 rounded-full text-sm font-medium cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onKeyClick?.(song.key)
+                        }}
                       >
-                        {difficulty}
+                        {song.key}
                       </Badge>
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
+                      <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+                        <Eye className="w-4 h-4" />
                         {views.toLocaleString()}
                       </span>
                     </div>
