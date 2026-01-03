@@ -15,9 +15,11 @@ interface TopBarProps {
   onNavigateHome?: () => void
   songs?: Song[]
   onViewSong?: (song: Song) => void
+  selectedFolder?: string | null
+  onAddSongToFolder?: (songId: string, folderId: string) => void
 }
 
-export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong }: TopBarProps) {
+export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong, selectedFolder, onAddSongToFolder }: TopBarProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [mounted, setMounted] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -84,8 +86,13 @@ export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong }: Top
                   key={song.id}
                   className="w-full px-4 py-2 text-left hover:bg-accent flex items-center gap-3 transition-colors"
                   onClick={() => {
-                    if (onViewSong) onViewSong(song)
-                    setSearchQuery(song.title)
+                    if (selectedFolder && onAddSongToFolder) {
+                      onAddSongToFolder(song.id, selectedFolder)
+                      setSearchQuery("")
+                    } else if (onViewSong) {
+                      onViewSong(song)
+                      setSearchQuery(song.title)
+                    }
                     setShowSuggestions(false)
                   }}
                 >
@@ -94,6 +101,11 @@ export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong }: Top
                     <span className="text-sm font-medium text-foreground truncate">{song.title}</span>
                     <span className="text-xs text-muted-foreground truncate">{song.artist}</span>
                   </div>
+                  {selectedFolder && (
+                    <div className="ml-auto text-[10px] font-bold text-primary uppercase bg-primary/10 px-1.5 py-0.5 rounded">
+                      Adicionar
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
