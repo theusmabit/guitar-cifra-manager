@@ -15,6 +15,17 @@ interface TopBarProps {
 
 export function TopBar({ onSearch, onNavigateHome }: TopBarProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [mounted, setMounted] = useState(false)
+  
+  useState(() => {
+    // This runs once during initialization, but useEffect is safer for hydration
+  })
+
+  import { useEffect } from "react"
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

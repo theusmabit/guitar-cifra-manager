@@ -1,0 +1,99 @@
+## Error Type
+Console Error
+
+## Error Message
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <div data-slot="sidebar-wr..." style={{...}} className="group/side...">
+      ...
+        <MenuProvider scope={{Menu:[...], ...}} onClose={function Menu.useCallback} isUsingKeyboardRef={{current:false}} ...>
+          <DropdownMenuTrigger asChild={true}>
+            <DropdownMenuTrigger data-slot="dropdown-m..." asChild={true}>
+              <MenuAnchor asChild={true} __scopeMenu={{Menu:[...], ...}}>
+                <PopperAnchor __scopePopper={{Menu:[...], ...}} asChild={true} ref={null}>
+                  <Primitive.div asChild={true} ref={function}>
+                    <Slot ref={function}>
+                      <SlotClone ref={function}>
+                        <Primitive.button type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
+                          <Slot type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
+                            <SlotClone type="button" id="radix-_R_1..." aria-haspopup="menu" aria-expanded={false} ...>
+                              <div
+                                className="flex items-center gap-2 p-2 hover:bg-sidebar-accent cursor-pointer transiti..."
+                                role="button"
+                                tabIndex={0}
+                                type="button"
++                               id="radix-_R_1patmlb_"
+-                               id="radix-_R_76atmlb_"
+                                aria-haspopup="menu"
+                                aria-expanded={false}
+                                aria-controls={undefined}
+                                data-state="closed"
+                                data-disabled={undefined}
+                                disabled={false}
+                                data-slot="dropdown-menu-trigger"
+                                onPointerDown={function handleEvent}
+                                onKeyDown={function handleEvent}
+                                ref={function}
+                              >
+          ...
+      ...
+        <MenuProvider scope={{Menu:[...], ...}} onClose={function Menu.useCallback} isUsingKeyboardRef={{current:false}} ...>
+          <DropdownMenuTrigger asChild={true}>
+            <DropdownMenuTrigger data-slot="dropdown-m..." asChild={true}>
+              <MenuAnchor asChild={true} __scopeMenu={{Menu:[...], ...}}>
+                <PopperAnchor __scopePopper={{Menu:[...], ...}} asChild={true} ref={null}>
+                  <Primitive.div asChild={true} ref={function}>
+                    <Slot ref={function}>
+                      <SlotClone ref={function}>
+                        <Primitive.button type="button" id="radix-_R_5..." aria-haspopup="menu" aria-expanded={false} ...>
+                          <Slot type="button" id="radix-_R_5..." aria-haspopup="menu" aria-expanded={false} ...>
+                            <SlotClone type="button" id="radix-_R_5..." aria-haspopup="menu" aria-expanded={false} ...>
+                              <Button variant="ghost" size="icon" className="text-muted..." type="button" ...>
+                                <button
+                                  data-slot="dropdown-menu-trigger"
+                                  className={"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded..."}
+                                  type="button"
++                                 id="radix-_R_56atmlb_"
+-                                 id="radix-_R_kqatmlb_"
+                                  aria-haspopup="menu"
+                                  aria-expanded={false}
+                                  aria-controls={undefined}
+                                  data-state="closed"
+                                  data-disabled={undefined}
+                                  disabled={false}
+                                  onPointerDown={function handleEvent}
+                                  onKeyDown={function handleEvent}
+                                  ref={function}
+                                >
+          ...
+
+
+
+    at div (<anonymous>:null:null)
+    at AppSidebar (components/app-sidebar.tsx:87:13)
+    at DropdownMenuTrigger (components/ui/dropdown-menu.tsx:27:5)
+    at AppSidebar (components/app-sidebar.tsx:85:11)
+    at GuitarTabsManager (components/guitar-tabs-manager.tsx:175:7)
+    at Page (app/page.tsx:4:10)
+
+## Code Frame
+  85 |           <DropdownMenuTrigger asChild>
+  86 |             {/* User Profile Row - Agora é o Trigger */}
+> 87 |             <div 
+     |             ^
+  88 |               className="flex items-center gap-2 p-2 hover:bg-sidebar-accent cursor-pointer transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-3 group-data-[collapsible=icon]:h-12 group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:rounded-none rounded-md"
+  89 |               role="button"
+  90 |               tabIndex={0}
+
+Next.js version: 16.0.10 (Turbopack)

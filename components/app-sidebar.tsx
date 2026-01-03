@@ -42,10 +42,31 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function AppSidebar({ currentView, onNavigate, ...props }: AppSidebarProps) {
   const { state } = useSidebar()
+  const [mounted, setMounted] = React.useState(false)
   const isCollapsed = state === "collapsed"
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const mockUser = {
     name: "Usuário Mock",
     email: "user@example.com",
+  }
+
+  if (!mounted) {
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader className="border-b border-sidebar-border h-16 flex items-center justify-center px-4 group-data-[collapsible=icon]:px-2">
+          <div className="flex items-center gap-2 font-bold text-primary">
+            <Music className="size-6" />
+            <span className="group-data-[collapsible=icon]:hidden">ChordMaster</span>
+          </div>
+        </SidebarHeader>
+        <SidebarContent />
+        <SidebarFooter className="border-t border-sidebar-border p-2 group-data-[collapsible=icon]:p-0" />
+      </Sidebar>
+    )
   }
 
   return (
