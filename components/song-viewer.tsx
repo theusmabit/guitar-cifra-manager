@@ -484,11 +484,13 @@ function ToolsPanel({
 }) {
   return (
     <div className="space-y-4">
-      {/* Music Player in the Sidebar */}
-      <MusicPlayer song={song} />
-
       <Card className="rounded-sm border-border shadow-none">
         <CardContent className="p-4 space-y-6">
+          {/* Music Player moved here */}
+          <div className="pb-2 border-b border-border">
+            <MusicPlayer song={song} />
+          </div>
+
           {/* Transpose Control */}
           <div className="space-y-2">
             <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Transpose</label>
