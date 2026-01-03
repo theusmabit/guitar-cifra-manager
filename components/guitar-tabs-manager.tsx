@@ -37,7 +37,9 @@ export function GuitarTabsManager() {
       setSongs(mockSongs)
       saveSongs(mockSongs)
     } else {
-      setSongs(loadedSongs)
+      // Garantir que não existam IDs duplicados nos dados carregados
+      const uniqueSongs = Array.from(new Map(loadedSongs.map(s => [s.id, s])).values())
+      setSongs(uniqueSongs)
     }
 
     setFolders(loadedFolders)
