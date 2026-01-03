@@ -5,6 +5,7 @@ import { Volume2, Play, Pause, SkipBack, SkipForward } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { Card, CardContent } from "@/components/ui/card"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import type { Song } from "@/lib/types"
 
 interface MusicPlayerProps {
@@ -74,25 +75,10 @@ export function MusicPlayer({ song, audioUrl }: MusicPlayerProps) {
   return (
     <Card className="rounded-sm border-border shadow-none bg-card">
       <audio ref={audioRef} src={audioUrl || `/placeholder-audio.mp3`} />
-      <CardContent className="p-4 space-y-3">
-        {/* Progress and Time */}
-        <div className="space-y-1">
-          <Slider
-            value={[currentTime]}
-            max={duration || 100}
-            step={0.1}
-            onValueChange={handleSeek}
-            className="w-full h-1.5"
-          />
-          <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
-        </div>
-
-        {/* All controls on one line */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1">
+      <CardContent className="p-3">
+        <div className="flex items-center gap-3">
+          {/* Controls Group */}
+          <div className="flex items-center gap-1 shrink-0">
             <Button
               variant="ghost"
               size="icon"
@@ -106,7 +92,7 @@ export function MusicPlayer({ song, audioUrl }: MusicPlayerProps) {
             <Button
               variant="default"
               size="icon"
-              className="h-9 w-9 rounded-full shrink-0"
+              className="h-8 w-8 rounded-full shrink-0 bg-primary hover:bg-primary/90"
               onClick={togglePlay}
               disabled={!audioUrl && true}
             >
@@ -124,15 +110,41 @@ export function MusicPlayer({ song, audioUrl }: MusicPlayerProps) {
             </Button>
           </div>
 
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <Volume2 className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          {/* Timeline / Progress Group */}
+          <div className="flex-1 flex items-center gap-2 min-w-0">
+            <span className="text-[10px] text-muted-foreground font-mono w-8 shrink-0">{formatTime(currentTime)}</span>
             <Slider
-              value={[volume]}
-              max={100}
-              step={1}
-              onValueChange={(v) => setVolume(v[0])}
-              className="flex-1"
+              value={[currentTime]}
+              max={duration || 100}
+              step={0.1}
+              onValueChange={handleSeek}
+              className="flex-1 h-1.5"
             />
+            <span className="text-[10px] text-muted-foreground font-mono w-8 shrink-0">{formatTime(duration)}</span>
+          </div>
+
+          {/* Vertical Volume Popover */}
+          <div className="shrink-0">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                  <Volume2 className="w-4 h-4 text-muted-foreground" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent side="top" align="center" className="w-12 p-3 bg-card border-border">
+                <div className="h-32 flex flex-col items-center gap-2">
+                  <Slider
+                    orientation="vertical"
+                    value={[volume]}
+                    max={100}
+                    step={1}
+                    onValueChange={(v) => setVolume(v[0])}
+                    className="h-full"
+                  />
+                  <span className="text-[10px] font-mono text-muted-foreground">{volume}%</span>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </CardContent>
