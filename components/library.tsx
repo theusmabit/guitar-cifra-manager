@@ -39,6 +39,10 @@ interface LibraryProps {
   showFolderManager?: boolean
   hideSearch?: boolean
   title: string
+  initialFilters?: { genre: string; artist: string; key: string }
+  onArtistClick?: (artist: string) => void
+  onTagClick?: (tag: string) => void
+  onKeyClick?: (key: string) => void
 }
 
 type SortOption = "title-asc" | "title-desc" | "artist-asc" | "artist-desc" | "newest" | "oldest"
@@ -58,16 +62,29 @@ export function Library({
   showFolderManager,
   hideSearch,
   title,
+  initialFilters,
+  onArtistClick,
+  onTagClick,
+  onKeyClick,
 }: LibraryProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [newFolderName, setNewFolderName] = useState("")
   const [isCreatingFolder, setIsCreatingFolder] = useState(false)
   const [sortOrder, setSortOrder] = useState<SortOption>("newest")
-  const [filters, setFilters] = useState({
-    genre: "",
-    artist: "",
-    key: "",
-  })
+  const [filters, setFilters] = useState(
+    initialFilters || {
+      genre: "",
+      artist: "",
+      key: "",
+    },
+  )
+
+  useEffect(() => {
+    if (initialFilters) {
+      setFilters(initialFilters)
+    }
+  }, [initialFilters])
+
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [suggestions, setSuggestions] = useState({
     genres: [] as string[],
@@ -423,9 +440,17 @@ export function Library({
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0" onClick={() => onViewSong(song)}>
+                  <div className="flex-1 min-w-0">
                     <CardTitle className="text-foreground text-lg mb-1 truncate">{song.title}</CardTitle>
-                    <p className="text-muted-foreground text-sm truncate">{song.artist}</p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onArtistClick?.(song.artist)
+                      }}
+                      className="text-muted-foreground text-sm truncate hover:text-primary transition-colors text-left"
+                    >
+                      {song.artist}
+                    </button>
                   </div>
                   <div className="flex items-center gap-1">
                     <Button
@@ -445,14 +470,29 @@ export function Library({
                   </div>
                 </div>
               </CardHeader>
-              <CardContent onClick={() => onViewSong(song)}>
+              <CardContent>
                 <div className="flex items-center justify-between">
                   <div className="flex flex-wrap gap-1">
-                    <Badge variant="secondary" className="bg-secondary text-secondary-foreground text-xs">
+                    <Badge
+                      variant="secondary"
+                      className="bg-secondary text-secondary-foreground text-xs cursor-pointer hover:bg-accent"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onKeyClick?.(song.key)
+                      }}
+                    >
                       Key: {song.key}
                     </Badge>
                     {song.tags.map((tag) => (
-                      <Badge key={tag} variant="outline" className="border-border text-muted-foreground text-xs">
+                      <Badge
+                        key={tag}
+                        variant="outline"
+                        className="border-border text-muted-foreground text-xs cursor-pointer hover:bg-accent"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onTagClick?.(tag)
+                        }}
+                      >
                         {tag}
                       </Badge>
                     ))}
@@ -539,18 +579,41 @@ export function Library({
                           </div>
                           <div className="min-w-0">
                             <h3 className="font-medium text-foreground truncate">{song.title}</h3>
-                            <p className="text-sm text-muted-foreground truncate">{song.artist}</p>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onArtistClick?.(song.artist)
+                              }}
+                              className="text-sm text-muted-foreground truncate hover:text-primary transition-colors text-left"
+                            >
+                              {song.artist}
+                            </button>
                           </div>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-3">
                         <div className="flex flex-wrap gap-1 max-w-[200px]">
-                          <Badge variant="secondary" className="bg-secondary text-secondary-foreground text-xs">
+                          <Badge
+                            variant="secondary"
+                            className="bg-secondary text-secondary-foreground text-xs cursor-pointer hover:bg-accent"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onKeyClick?.(song.key)
+                            }}
+                          >
                             {song.key}
                           </Badge>
                           {song.tags.slice(0, 2).map((tag) => (
-                            <Badge key={tag} variant="outline" className="border-border text-muted-foreground text-xs">
+                            <Badge
+                              key={tag}
+                              variant="outline"
+                              className="border-border text-muted-foreground text-xs cursor-pointer hover:bg-accent"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onTagClick?.(tag)
+                              }}
+                            >
                               {tag}
                             </Badge>
                           ))}

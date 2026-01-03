@@ -22,6 +22,11 @@ export function GuitarTabsManager() {
   const [selectedSong, setSelectedSong] = useState<Song | null>(null)
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const [filters, setFilters] = useState({
+    genre: "",
+    artist: "",
+    key: "",
+  })
 
   useEffect(() => {
     const loadedSongs = loadSongs()
@@ -77,7 +82,20 @@ export function GuitarTabsManager() {
   }
 
   const handleArtistClick = (artist: string) => {
-    setSearchQuery(artist)
+    setSearchQuery("")
+    setFilters({ genre: "", artist: artist, key: "" })
+    setCurrentView("library")
+  }
+
+  const handleTagClick = (tag: string) => {
+    setSearchQuery("")
+    setFilters({ genre: tag, artist: "", key: "" })
+    setCurrentView("library")
+  }
+
+  const handleKeyClick = (key: string) => {
+    setSearchQuery("")
+    setFilters({ genre: "", artist: "", key: key })
     setCurrentView("library")
   }
 
@@ -105,6 +123,7 @@ export function GuitarTabsManager() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
+    setFilters({ genre: "", artist: "", key: "" })
     if (query.trim()) setCurrentView("library")
   }
 
@@ -131,11 +150,50 @@ export function GuitarTabsManager() {
   const renderContent = () => {
     switch (currentView) {
       case "home":
-        return <Homepage songs={songs} favoriteSongs={favoriteSongs} folders={folders} onViewSong={handleViewSong} onNavigate={setCurrentView} />
+        return (
+          <Homepage
+            songs={songs}
+            favoriteSongs={favoriteSongs}
+            folders={folders}
+            onViewSong={handleViewSong}
+            onNavigate={setCurrentView}
+            onArtistClick={handleArtistClick}
+            onTagClick={handleTagClick}
+            onKeyClick={handleKeyClick}
+          />
+        )
       case "library":
-        return <Library songs={searchQuery ? filteredSongs : songs} onViewSong={handleViewSong} onToggleFavorite={handleToggleFavorite} onDeleteSong={handleDeleteSong} folders={folders} onAddSongToFolder={handleAddSongToFolder} title={searchQuery ? `Resultados para "${searchQuery}"` : "Todas as Músicas"} />
+        return (
+          <Library
+            songs={searchQuery ? filteredSongs : songs}
+            onViewSong={handleViewSong}
+            onToggleFavorite={handleToggleFavorite}
+            onDeleteSong={handleDeleteSong}
+            folders={folders}
+            onAddSongToFolder={handleAddSongToFolder}
+            title={searchQuery ? `Resultados para "${searchQuery}"` : "Todas as Músicas"}
+            initialFilters={filters}
+            onArtistClick={handleArtistClick}
+            onTagClick={handleTagClick}
+            onKeyClick={handleKeyClick}
+          />
+        )
       case "favorites":
-        return <Library songs={favoriteSongs} onViewSong={handleViewSong} onToggleFavorite={handleToggleFavorite} onDeleteSong={handleDeleteSong} folders={folders} onAddSongToFolder={handleAddSongToFolder} title="Favoritos" />
+        return (
+          <Library
+            songs={favoriteSongs}
+            onViewSong={handleViewSong}
+            onToggleFavorite={handleToggleFavorite}
+            onDeleteSong={handleDeleteSong}
+            folders={folders}
+            onAddSongToFolder={handleAddSongToFolder}
+            title="Favoritos"
+            initialFilters={filters}
+            onArtistClick={handleArtistClick}
+            onTagClick={handleTagClick}
+            onKeyClick={handleKeyClick}
+          />
+        )
       case "folders":
         return (
           <FolderView
@@ -163,6 +221,10 @@ export function GuitarTabsManager() {
             selectedFolder={selectedFolder}
             title={currentFolder?.name || "Pasta"}
             hideSearch
+            initialFilters={filters}
+            onArtistClick={handleArtistClick}
+            onTagClick={handleTagClick}
+            onKeyClick={handleKeyClick}
           />
         )
       case "add":
@@ -180,6 +242,8 @@ export function GuitarTabsManager() {
               setCurrentView("folder-detail")
             }}
             onArtistClick={handleArtistClick}
+            onTagClick={handleTagClick}
+            onKeyClick={handleKeyClick}
           />
         ) : null
       case "settings":

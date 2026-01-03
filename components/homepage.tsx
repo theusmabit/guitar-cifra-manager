@@ -12,9 +12,21 @@ interface HomepageProps {
   folders: Folder[]
   onViewSong: (song: Song) => void
   onNavigate: (view: "library" | "favorites" | "folders" | "add") => void
+  onArtistClick?: (artist: string) => void
+  onTagClick?: (tag: string) => void
+  onKeyClick?: (key: string) => void
 }
 
-export function Homepage({ songs, favoriteSongs, folders, onViewSong, onNavigate }: HomepageProps) {
+export function Homepage({
+  songs,
+  favoriteSongs,
+  folders,
+  onViewSong,
+  onNavigate,
+  onArtistClick,
+  onTagClick,
+  onKeyClick,
+}: HomepageProps) {
   const extractChords = (content: string): string[] => {
     const chordPattern = /\b([A-G](#|b)?(m|maj|min|dim|aug|sus|add)?[0-9]?)\b/g
     const matches = content.match(chordPattern) || []
@@ -118,7 +130,15 @@ export function Homepage({ songs, favoriteSongs, folders, onViewSong, onNavigate
                     <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
                       {song.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground mb-3">{song.artist}</p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onArtistClick?.(song.artist)
+                      }}
+                      className="text-sm text-muted-foreground mb-3 hover:text-primary transition-colors block"
+                    >
+                      {song.artist}
+                    </button>
 
                     <div className="flex flex-wrap gap-1 mb-3">
                       {chords.map((chord) => (

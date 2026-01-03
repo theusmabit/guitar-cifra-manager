@@ -38,6 +38,8 @@ interface SongViewerProps {
   onAddSongToFolder?: (songId: string, folderId: string) => void
   onNavigateToFolder?: (folderId: string) => void
   onArtistClick?: (artist: string) => void
+  onTagClick?: (tag: string) => void
+  onKeyClick?: (key: string) => void
 }
 
 export function SongViewer({
@@ -48,6 +50,8 @@ export function SongViewer({
   onAddSongToFolder,
   onNavigateToFolder,
   onArtistClick,
+  onTagClick,
+  onKeyClick,
 }: SongViewerProps) {
   const [transpose, setTranspose] = useState(0)
   const [autoScroll, setAutoScroll] = useState(false)
