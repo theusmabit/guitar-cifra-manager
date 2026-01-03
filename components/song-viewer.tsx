@@ -114,17 +114,17 @@ export function SongViewer({
             )}
 
             <div className="flex-1 max-w-4xl">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-20 h-20 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
+              <div className="flex flex-col md:flex-row md:items-start gap-4 mb-4">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-8 h-8 md:w-10 md:h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-4xl font-bold text-foreground mb-1">{song.title}</h1>
+                  <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-1 leading-tight">{song.title}</h1>
                   <button
                     onClick={() => onArtistClick?.(song.artist)}
-                    className="text-lg text-muted-foreground hover:text-primary transition-colors text-left"
+                    className="text-base md:text-lg text-muted-foreground hover:text-primary transition-colors text-left"
                   >
                     {song.artist}
                   </button>
@@ -135,7 +135,7 @@ export function SongViewer({
                         <Badge
                           key={folder.id}
                           variant="secondary"
-                          className="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer transition-colors"
+                          className="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer transition-colors text-[10px] md:text-xs"
                           onClick={() => onNavigateToFolder?.(folder.id)}
                         >
                           {folder.name}
@@ -145,13 +145,13 @@ export function SongViewer({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-y border-border bg-card/30 py-3 px-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-y border-border bg-card/30 py-3 px-4 gap-4">
                 <div className="flex items-center gap-3">
                   <Button
                     variant={isSaved ? "default" : "outline"}
                     size="sm"
                     onClick={() => setIsSaved(!isSaved)}
-                    className="rounded-sm h-9"
+                    className="rounded-sm h-9 flex-1 sm:flex-none"
                   >
                     <Heart className={`w-3.5 h-3.5 mr-1.5 ${isSaved ? "fill-current" : ""}`} />
                     {isSaved ? "Saved" : "Save"}
@@ -159,7 +159,7 @@ export function SongViewer({
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="rounded-sm h-9 bg-transparent">
+                      <Button variant="outline" size="sm" className="rounded-sm h-9 bg-transparent flex-1 sm:flex-none">
                         <Plus className="w-3.5 h-3.5 mr-1.5" />
                         Add to page
                         <ChevronDown className="w-3.5 h-3.5 ml-1.5" />
@@ -185,13 +185,13 @@ export function SongViewer({
                   </DropdownMenu>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-foreground">Chords:</span>
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
+                  <span className="text-sm font-medium text-foreground whitespace-nowrap">Chords:</span>
                   {uniqueChords.slice(0, 4).map((chord, index) => (
                     <Badge
                       key={index}
                       variant="outline"
-                      className="rounded-sm border-primary/30 bg-primary/5 text-primary text-sm px-2.5 py-0.5 font-medium"
+                      className="rounded-sm border-primary/30 bg-primary/5 text-primary text-sm px-2.5 py-0.5 font-medium whitespace-nowrap"
                     >
                       {chord}
                     </Badge>
