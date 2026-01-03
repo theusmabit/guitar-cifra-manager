@@ -2,24 +2,32 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Search, Bell, Music } from "lucide-react"
+import { Search, Bell, Music, Menu, Plus, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "./theme-toggle"
 import { SidebarCollapseButton } from "./sidebar-collapse-button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import type { Song } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 interface TopBarProps {
   onSearch?: (query: string) => void
   onNavigateHome?: () => void
+  onNavigate?: (view: any) => void
+  currentView?: string
   songs?: Song[]
   onViewSong?: (song: Song) => void
   selectedFolder?: string | null
   onAddSongToFolder?: (songId: string, folderId: string) => void
 }
 
-export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong, selectedFolder, onAddSongToFolder }: TopBarProps) {
+export function TopBar({ onSearch, onNavigateHome, onNavigate, currentView, songs = [], onViewSong, selectedFolder, onAddSongToFolder }: TopBarProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [mounted, setMounted] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -59,14 +67,32 @@ export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong, selec
           <SidebarCollapseButton />
         </div>
         
+        {/* Mobile Menu */}
+        <div className="md:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-muted-foreground">
+                <Menu className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-card border-border">
+              <DropdownMenuItem onClick={() => onNavigate?.("home")}>Home</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onNavigate?.("library")}>Library</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onNavigate?.("favorites")}>Favorites</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onNavigate?.("folders")}>Folders</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onNavigate?.("add")} className="text-primary font-medium">Add Song</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         {/* Center: Search Bar */}
-        <div className="flex-1 max-w-md mx-4 hidden md:block relative">
+        <div className="flex-1 max-w-md mx-4 relative">
           <form onSubmit={handleSearch}>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Buscar artista ou música..."
+                placeholder="Buscar..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -74,7 +100,7 @@ export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong, selec
                 }}
                 onFocus={() => setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                className="pl-10 bg-muted/50 border-none w-full"
+                className="pl-10 bg-muted/50 border-none w-full h-9 text-sm"
               />
             </div>
           </form>
@@ -101,11 +127,6 @@ export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong, selec
                     <span className="text-sm font-medium text-foreground truncate">{song.title}</span>
                     <span className="text-xs text-muted-foreground truncate">{song.artist}</span>
                   </div>
-                  {selectedFolder && (
-                    <div className="ml-auto text-[10px] font-bold text-primary uppercase bg-primary/10 px-1.5 py-0.5 rounded">
-                      Adicionar
-                    </div>
-                  )}
                 </button>
               ))}
             </div>
@@ -114,13 +135,18 @@ export function TopBar({ onSearch, onNavigateHome, songs = [], onViewSong, selec
       </div>
       
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="text-muted-foreground relative">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background" />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="text-muted-foreground hidden sm:flex"
+          onClick={() => onNavigate?.("add")}
+        >
+          <Plus className="w-5 h-5" />
         </Button>
-        
-        {/* Theme Toggle */}
         <ThemeToggle />
+        <Button variant="ghost" size="icon" className="text-muted-foreground">
+          <Settings className="w-5 h-5" />
+        </Button>
       </div>
     </header>
   )
