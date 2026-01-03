@@ -37,6 +37,7 @@ interface LibraryProps {
   selectedFolder?: string | null
   onRemoveSongFromFolder?: (songId: string, folderId: string) => void
   showFolderManager?: boolean
+  hideSearch?: boolean
   title: string
 }
 
@@ -55,6 +56,7 @@ export function Library({
   selectedFolder,
   onRemoveSongFromFolder,
   showFolderManager,
+  hideSearch,
   title,
 }: LibraryProps) {
   const [searchQuery, setSearchQuery] = useState("")
@@ -258,17 +260,19 @@ export function Library({
         )}
         
         <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              placeholder="Search by title or artist..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
-            />
-          </div>
+          {!hideSearch && (
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                placeholder="Search by title or artist..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
+              />
+            </div>
+          )}
           
-          <div className="flex gap-2 items-center flex-wrap">
+          <div className={cn("flex gap-2 items-center flex-wrap", hideSearch && "flex-1 justify-end")}>
             <div className="flex items-center gap-2">
               <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
               <Select value={sortOrder} onValueChange={(v: SortOption) => setSortOrder(v)}>

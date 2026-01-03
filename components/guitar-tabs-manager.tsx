@@ -157,6 +157,7 @@ export function GuitarTabsManager() {
             onRemoveSongFromFolder={handleRemoveSongFromFolder}
             selectedFolder={selectedFolder}
             title={currentFolder?.name || "Pasta"}
+            hideSearch
           />
         )
       case "add":
