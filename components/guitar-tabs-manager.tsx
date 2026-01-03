@@ -8,6 +8,7 @@ import { AppSidebar } from "./app-sidebar"
 import { SettingsView } from "./settings-view"
 import { Homepage } from "./homepage"
 import { TopBar } from "./top-bar"
+import { FolderView } from "./folder-view"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import type { Song, Folder } from "@/lib/types"
 import { getMockSongs, saveSongs, loadSongs, saveFolders, loadFolders } from "@/lib/storage"
@@ -16,7 +17,7 @@ export function GuitarTabsManager() {
   const [songs, setSongs] = useState<Song[]>([])
   const [folders, setFolders] = useState<Folder[]>([])
   const [currentView, setCurrentView] = useState<
-    "home" | "library" | "favorites" | "folders" | "add" | "settings" | "song"
+    "home" | "library" | "favorites" | "folders" | "add" | "settings" | "song" | "folder-detail"
   >("home")
   const [selectedSong, setSelectedSong] = useState<Song | null>(null)
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
@@ -131,7 +132,33 @@ export function GuitarTabsManager() {
       case "favorites":
         return <Library songs={favoriteSongs} onViewSong={handleViewSong} onToggleFavorite={handleToggleFavorite} onDeleteSong={handleDeleteSong} folders={folders} onAddSongToFolder={handleAddSongToFolder} title="Favoritos" />
       case "folders":
-        return <Library songs={selectedFolder ? folderSongs : []} onViewSong={handleViewSong} onToggleFavorite={handleToggleFavorite} onDeleteSong={handleDeleteSong} folders={folders} onAddSongToFolder={handleAddSongToFolder} onAddFolder={() => handleAddFolder("Nova Pasta")} onDeleteFolder={handleDeleteFolder} onSelectFolder={setSelectedFolder} selectedFolder={selectedFolder} onRemoveSongFromFolder={handleRemoveSongFromFolder} showFolderManager title="Pastas" />
+        return (
+          <FolderView
+            folders={folders}
+            songs={songs}
+            onSelectFolder={(id) => {
+              setSelectedFolder(id)
+              setCurrentView("folder-detail")
+            }}
+            onAddFolder={handleAddFolder}
+            onDeleteFolder={handleDeleteFolder}
+          />
+        )
+      case "folder-detail":
+        const currentFolder = folders.find(f => f.id === selectedFolder)
+        return (
+          <Library
+            songs={folderSongs}
+            onViewSong={handleViewSong}
+            onToggleFavorite={handleToggleFavorite}
+            onDeleteSong={handleDeleteSong}
+            folders={folders}
+            onAddSongToFolder={handleAddSongToFolder}
+            onRemoveSongFromFolder={handleRemoveSongFromFolder}
+            selectedFolder={selectedFolder}
+            title={currentFolder?.name || "Pasta"}
+          />
+        )
       case "add":
         return <AddSong onAddSong={handleAddSong} onImportSongs={(s) => setSongs([...songs, ...s])} />
       case "song":
