@@ -123,49 +123,34 @@ export function Homepage({
                       </div>
                     )}
 
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
-                      <Music className="w-6 h-6 text-primary" />
-                    </div>
-
-                    <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-                      {song.title}
-                    </h3>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onArtistClick?.(song.artist)
-                      }}
-                      className="text-sm text-muted-foreground mb-3 hover:text-primary transition-colors block"
-                    >
-                      {song.artist}
-                    </button>
-
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {chords.map((chord) => (
-                        <Badge
-                          key={chord}
-                          variant="secondary"
-                          className="bg-primary/10 text-primary text-xs px-2 py-0.5"
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Music className="w-6 h-6 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-foreground text-lg mb-0.5 group-hover:text-primary transition-colors truncate leading-tight">
+                          {song.title}
+                        </h3>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onArtistClick?.(song.artist)
+                          }}
+                          className="text-sm text-muted-foreground hover:text-foreground/80 transition-colors cursor-pointer text-left block w-full truncate"
                         >
-                          {chord}
-                        </Badge>
-                      ))}
+                          {song.artist}
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/50">
                       <Badge
-                        variant="secondary"
-                        className={
-                          difficulty === "Beginner"
-                            ? "bg-green-100 text-green-700"
-                            : difficulty === "Intermediate"
-                              ? "bg-orange-100 text-orange-700"
-                              : "bg-red-100 text-red-700"
-                        }
+                        variant="outline"
+                        className="border-border text-muted-foreground text-[10px] uppercase font-bold tracking-wider"
                       >
                         {difficulty}
                       </Badge>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
                         <Eye className="w-3 h-3" />
                         {views.toLocaleString()}
                       </span>

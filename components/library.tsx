@@ -436,58 +436,48 @@ export function Library({
           {processedSongs.map((song) => (
             <Card
               key={song.id}
-              className="bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group"
+              className="bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group flex flex-col h-full"
             >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-foreground text-lg mb-1 truncate">{song.title}</CardTitle>
+              <CardContent className="p-4 flex flex-col h-full">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Music className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0" onClick={() => onViewSong(song)}>
+                    <h3 className="text-foreground font-bold text-lg truncate leading-tight mb-0.5">{song.title}</h3>
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
                         onArtistClick?.(song.artist)
                       }}
-                      className="text-muted-foreground text-sm truncate hover:text-primary transition-colors text-left"
+                      className="text-muted-foreground text-sm truncate hover:text-foreground/80 transition-colors cursor-pointer text-left block w-full"
                     >
                       {song.artist}
                     </button>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn(
-                        "h-8 w-8",
-                        song.isFavorite ? "text-primary hover:text-primary/80" : "text-muted-foreground hover:text-primary"
-                      )}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onToggleFavorite(song.id)
-                      }}
-                    >
-                      <Heart className={cn("w-4 h-4", song.isFavorite && "fill-current")} />
-                    </Button>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "h-8 w-8 -mt-1 -mr-1",
+                      song.isFavorite ? "text-primary hover:text-primary/80" : "text-muted-foreground hover:text-primary"
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onToggleFavorite(song.id)
+                    }}
+                  >
+                    <Heart className={cn("w-4 h-4", song.isFavorite && "fill-current")} />
+                  </Button>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
+
+                <div className="mt-auto flex items-center justify-between pt-2">
                   <div className="flex flex-wrap gap-1">
-                    <Badge
-                      variant="secondary"
-                      className="bg-secondary text-secondary-foreground text-xs cursor-pointer hover:bg-accent"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onKeyClick?.(song.key)
-                      }}
-                    >
-                      Key: {song.key}
-                    </Badge>
-                    {song.tags.map((tag) => (
+                    {song.tags.slice(0, 1).map((tag) => (
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="border-border text-muted-foreground text-xs cursor-pointer hover:bg-accent"
+                        className="border-border text-muted-foreground text-[10px] uppercase font-bold tracking-wider cursor-pointer hover:bg-accent"
                         onClick={(e) => {
                           e.stopPropagation()
                           onTagClick?.(tag)
@@ -497,64 +487,16 @@ export function Library({
                       </Badge>
                     ))}
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {showFolderManager && selectedFolder && onRemoveSongFromFolder && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-primary"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onRemoveSongFromFolder(song.id, selectedFolder)
-                        }}
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-primary"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <FolderPlus className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="bg-card border-border">
-                        {folders.length === 0 ? (
-                          <div className="px-2 py-1.5 text-sm text-muted-foreground">No folders yet</div>
-                        ) : (
-                          folders.map((folder) => (
-                            <DropdownMenuItem
-                              key={folder.id}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                onAddSongToFolder(song.id, folder.id)
-                              }}
-                              className="text-foreground hover:bg-accent focus:bg-accent"
-                            >
-                              {folder.name}
-                            </DropdownMenuItem>
-                          ))
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        if (confirm("Are you sure you want to delete this song?")) {
-                          onDeleteSong(song.id)
-                        }
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  <Badge
+                    variant="secondary"
+                    className="bg-secondary text-secondary-foreground text-[10px] uppercase font-bold tracking-wider cursor-pointer hover:bg-accent"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onKeyClick?.(song.key)
+                    }}
+                  >
+                    Key: {song.key}
+                  </Badge>
                 </div>
               </CardContent>
             </Card>
