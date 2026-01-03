@@ -117,8 +117,8 @@ export function Homepage({
                   className="bg-card border border-border/40 hover:shadow-lg transition-all cursor-pointer group relative rounded-2xl overflow-hidden"
                   onClick={() => onViewSong(song)}
                 >
-                  <CardContent className="p-5 flex flex-col h-full">
-                    <div className="absolute top-5 right-5 z-10">
+                  <CardContent className="p-5 pt-6 flex flex-col h-full">
+                    <div className="absolute top-6 right-5 z-10">
                       <Heart className={cn("w-5 h-5 text-muted-foreground transition-colors", song.isFavorite && "fill-red-500 text-red-500")} />
                     </div>
 
