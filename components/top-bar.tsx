@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,21 +17,23 @@ export function TopBar({ onSearch, onNavigateHome }: TopBarProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [mounted, setMounted] = useState(false)
   
-  useState(() => {
-    // This runs once during initialization, but useEffect is safer for hydration
-  })
-
-  import { useEffect } from "react"
-
   useEffect(() => {
     setMounted(true)
   }, [])
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (onSearch) {
       onSearch(searchQuery)
     }
+  }
+
+  if (!mounted) {
+    return (
+      <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
+        <div className="flex items-center gap-2 flex-1" />
+      </header>
+    )
   }
 
   return (
