@@ -13,6 +13,7 @@ import {
   Columns2,
   Minus,
   Type,
+  Settings2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -28,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import type { Song, Folder } from "@/lib/types"
 
 interface SongViewerProps {
@@ -183,6 +185,35 @@ export function SongViewer({
                       )}
                     </DropdownMenuContent>
                   </DropdownMenu>
+
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" size="sm" className="rounded-sm h-9 flex-1 sm:hidden">
+                        <Settings2 className="w-3.5 h-3.5 mr-1.5" />
+                        Tools
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-[300px] bg-card border-border p-0 overflow-y-auto">
+                      <SheetHeader className="p-4 border-b border-border">
+                        <SheetTitle>Song Tools</SheetTitle>
+                      </SheetHeader>
+                      <div className="p-4 space-y-6">
+                        <ToolsPanel 
+                          song={song}
+                          transpose={transpose}
+                          setTranspose={setTranspose}
+                          autoScroll={autoScroll}
+                          setAutoScroll={setAutoScroll}
+                          scrollSpeed={scrollSpeed}
+                          setScrollSpeed={setScrollSpeed}
+                          twoColumnMode={twoColumnMode}
+                          setTwoColumnMode={setTwoColumnMode}
+                          textSize={textSize}
+                          setTextSize={setTextSize}
+                        />
+                      </div>
+                    </SheetContent>
+                  </Sheet>
                 </div>
 
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
@@ -253,142 +284,19 @@ export function SongViewer({
             {rightSidebarOpen && (
               <div className="hidden lg:block w-80 space-y-4">
                 <div className="sticky top-20 space-y-4">
-                  {/* Music Player in the Sidebar */}
-                  <MusicPlayer song={song} />
-
-                  <Card className="rounded-sm border-border shadow-none">
-                    <CardContent className="p-4 space-y-6">
-                      {/* Transpose Control */}
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Transpose</label>
-                        <div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-sm border border-border">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setTranspose((t) => t - 1)}
-                            className="h-8 w-8 p-0 rounded-sm hover:bg-background"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </Button>
-                          <span className="text-xs font-bold flex-1 text-center">
-                            {transpose === 0 ? "Original" : transpose > 0 ? `+${transpose}` : transpose}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setTranspose((t) => t + 1)}
-                            className="h-8 w-8 p-0 rounded-sm hover:bg-background"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Tool Grid */}
-                      <div className="grid grid-cols-2 gap-2">
-                        {/* Auto-scroll */}
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Auto-scroll</label>
-                          <div className="flex gap-1">
-                            <Button
-                              variant={autoScroll ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => setAutoScroll(!autoScroll)}
-                              className="flex-1 rounded-sm h-10 px-0"
-                            >
-                              {autoScroll ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                            </Button>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-10 w-10 p-0 rounded-sm">
-                                  <ChevronDown className="w-3 h-3" />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-48 p-3 bg-card border-border">
-                                <div className="space-y-2">
-                                  <div className="flex justify-between">
-                                    <span className="text-xs font-medium">Speed</span>
-                                    <span className="text-xs text-primary font-bold">{scrollSpeed}</span>
-                                  </div>
-                                  <input
-                                    type="range"
-                                    min="30"
-                                    max="180"
-                                    value={scrollSpeed}
-                                    onChange={(e) => setScrollSpeed(Number(e.target.value))}
-                                    className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
-                                  />
-                                </div>
-                              </PopoverContent>
-                            </Popover>
-                          </div>
-                        </div>
-
-                        {/* Layout Toggle */}
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Layout</label>
-                          <Button
-                            variant={twoColumnMode ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setTwoColumnMode(!twoColumnMode)}
-                            className="w-full rounded-sm h-10"
-                          >
-                            <Columns2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Text Size Control */}
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Text Appearance</label>
-                        <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-sm border border-border">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setTextSize(Math.max(10, textSize - 1))}
-                            className="h-8 w-8 p-0 rounded-sm hover:bg-background"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </Button>
-                          <div className="flex-1 flex items-center justify-center gap-1.5">
-                            <Type className="w-3 h-3 text-muted-foreground" />
-                            <span className="text-xs font-bold">{textSize}px</span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setTextSize(Math.min(32, textSize + 1))}
-                            className="h-8 w-8 p-0 rounded-sm hover:bg-background"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="rounded-sm border-border shadow-none">
-                    <Tabs defaultValue="tuner" className="w-full">
-                      <TabsList className="w-full grid grid-cols-2 rounded-sm h-9 px-4 bg-transparent">
-                        <TabsTrigger value="tuner" className="rounded-sm text-xs">
-                          Tuner
-                        </TabsTrigger>
-                        <TabsTrigger value="metronome" className="rounded-sm text-xs">
-                          Metronome
-                        </TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="tuner" className="mt-0">
-                        <CardContent className="pt-4 px-4 pb-4">
-                          <Tuner />
-                        </CardContent>
-                      </TabsContent>
-                      <TabsContent value="metronome" className="mt-0">
-                        <CardContent className="pt-4 px-4 pb-4">
-                          <Metronome />
-                        </CardContent>
-                      </TabsContent>
-                    </Tabs>
-                  </Card>
+                  <ToolsPanel 
+                    song={song}
+                    transpose={transpose}
+                    setTranspose={setTranspose}
+                    autoScroll={autoScroll}
+                    setAutoScroll={setAutoScroll}
+                    scrollSpeed={scrollSpeed}
+                    setScrollSpeed={setScrollSpeed}
+                    twoColumnMode={twoColumnMode}
+                    setTwoColumnMode={setTwoColumnMode}
+                    textSize={textSize}
+                    setTextSize={setTextSize}
+                  />
                 </div>
               </div>
             )}
@@ -547,4 +455,171 @@ function getColumnContent(content: string, columnIndex: number): string {
   } else {
     return lines.slice(midpoint).join("\n")
   }
+}
+
+function ToolsPanel({
+  song,
+  transpose,
+  setTranspose,
+  autoScroll,
+  setAutoScroll,
+  scrollSpeed,
+  setScrollSpeed,
+  twoColumnMode,
+  setTwoColumnMode,
+  textSize,
+  setTextSize,
+}: {
+  song: Song
+  transpose: number
+  setTranspose: React.Dispatch<React.SetStateAction<number>>
+  autoScroll: boolean
+  setAutoScroll: React.Dispatch<React.SetStateAction<boolean>>
+  scrollSpeed: number
+  setScrollSpeed: React.Dispatch<React.SetStateAction<number>>
+  twoColumnMode: boolean
+  setTwoColumnMode: React.Dispatch<React.SetStateAction<boolean>>
+  textSize: number
+  setTextSize: React.Dispatch<React.SetStateAction<number>>
+}) {
+  return (
+    <div className="space-y-4">
+      {/* Music Player in the Sidebar */}
+      <MusicPlayer song={song} />
+
+      <Card className="rounded-sm border-border shadow-none">
+        <CardContent className="p-4 space-y-6">
+          {/* Transpose Control */}
+          <div className="space-y-2">
+            <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Transpose</label>
+            <div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-sm border border-border">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setTranspose((t) => t - 1)}
+                className="h-8 w-8 p-0 rounded-sm hover:bg-background"
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <span className="text-xs font-bold flex-1 text-center">
+                {transpose === 0 ? "Original" : transpose > 0 ? `+${transpose}` : transpose}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setTranspose((t) => t + 1)}
+                className="h-8 w-8 p-0 rounded-sm hover:bg-background"
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Tool Grid */}
+          <div className="grid grid-cols-2 gap-2">
+            {/* Auto-scroll */}
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Auto-scroll</label>
+              <div className="flex gap-1">
+                <Button
+                  variant={autoScroll ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setAutoScroll(!autoScroll)}
+                  className="flex-1 rounded-sm h-10 px-0"
+                >
+                  {autoScroll ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                </Button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-10 w-10 p-0 rounded-sm">
+                      <ChevronDown className="w-3 h-3" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-48 p-3 bg-card border-border">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-xs font-medium">Speed</span>
+                        <span className="text-xs text-primary font-bold">{scrollSpeed}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="30"
+                        max="180"
+                        value={scrollSpeed}
+                        onChange={(e) => setScrollSpeed(Number(e.target.value))}
+                        className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+
+            {/* Layout Toggle */}
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Layout</label>
+              <Button
+                variant={twoColumnMode ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTwoColumnMode(!twoColumnMode)}
+                className="w-full rounded-sm h-10"
+              >
+                <Columns2 className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Text Size Control */}
+          <div className="space-y-2">
+            <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight">Text Appearance</label>
+            <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-sm border border-border">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setTextSize(Math.max(10, textSize - 1))}
+                className="h-8 w-8 p-0 rounded-sm hover:bg-background"
+              >
+                <Minus className="w-3 h-3" />
+              </Button>
+              <div className="flex-1 flex items-center justify-center gap-1.5">
+                <Type className="w-3 h-3 text-muted-foreground" />
+                <span className="text-xs font-bold">{textSize}px</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setTextSize(Math.min(32, textSize + 1))}
+                className="h-8 w-8 p-0 rounded-sm hover:bg-background"
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-sm border-border shadow-none">
+        <Tabs defaultValue="tuner" className="w-full">
+          <TabsList className="w-full grid grid-cols-2 rounded-sm h-9 px-4 bg-transparent">
+            <TabsTrigger value="tuner" className="rounded-sm text-xs">
+              Tuner
+            </TabsTrigger>
+            <TabsTrigger value="metronome" className="rounded-sm text-xs">
+              Metronome
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="tuner" className="mt-0">
+            <CardContent className="pt-4 px-4 pb-4">
+              <Tuner />
+            </CardContent>
+          </TabsContent>
+          <TabsContent value="metronome" className="mt-0">
+            <CardContent className="pt-4 px-4 pb-4">
+              <Metronome />
+            </CardContent>
+          </TabsContent>
+        </Tabs>
+      </Card>
+    </div>
+  )
 }
