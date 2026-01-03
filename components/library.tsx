@@ -492,7 +492,7 @@ export function Library({
                   ))}
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-border/30 flex items-center justify-between">
+                <div className="mt-auto pt-5 border-t border-border/30 flex items-center justify-between">
                   <Badge
                     variant="secondary"
                     className="bg-[#E9F9EF] text-[#2D8A4E] border-none px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer hover:bg-[#D4F4DF] transition-colors"
