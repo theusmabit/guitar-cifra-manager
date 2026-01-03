@@ -141,7 +141,7 @@ export function Homepage({
                       </button>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 mb-8">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {song.tags.slice(0, 2).map((tag) => (
                         <Badge
                           key={tag}
