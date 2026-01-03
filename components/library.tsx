@@ -432,21 +432,21 @@ export function Library({
         </div>
       ) : viewMode === "grid" ? (
         // Grid View
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-[1400px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {processedSongs.map((song) => (
             <Card
               key={song.id}
-              className="bg-card border-border hover:shadow-md transition-all cursor-pointer group relative"
+              className="bg-card border border-border/40 hover:shadow-lg transition-all cursor-pointer group relative rounded-2xl overflow-hidden"
               onClick={() => onViewSong(song)}
             >
-              <CardContent className="p-6">
-                <div className="absolute top-6 right-6">
+              <CardContent className="p-5 flex flex-col h-full">
+                <div className="absolute top-5 right-5 z-10">
                   <Button
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "h-8 w-8 text-muted-foreground hover:text-primary transition-colors",
-                      song.isFavorite && "text-primary"
+                      "h-8 w-8 text-muted-foreground hover:bg-transparent transition-colors",
+                      song.isFavorite && "text-red-500 hover:text-red-600"
                     )}
                     onClick={(e) => {
                       e.stopPropagation()
@@ -457,29 +457,31 @@ export function Library({
                   </Button>
                 </div>
 
-                <div className="w-14 h-14 rounded-xl bg-orange-100 flex items-center justify-center mb-4">
-                  <Music className="w-8 h-8 text-orange-500" />
+                <div className="w-12 h-12 rounded-xl bg-[#FFF1E7] flex items-center justify-center mb-4">
+                  <Music className="w-6 h-6 text-[#FF8A3D]" />
                 </div>
 
-                <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
-                  {song.title}
-                </h3>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onArtistClick?.(song.artist)
-                  }}
-                  className="text-base text-muted-foreground mb-4 hover:text-foreground/80 transition-colors cursor-pointer text-left block"
-                >
-                  {song.artist}
-                </button>
+                <div className="space-y-1 mb-4">
+                  <h3 className="text-lg font-bold text-[#1A1A1A] group-hover:text-primary transition-colors leading-tight truncate">
+                    {song.title}
+                  </h3>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onArtistClick?.(song.artist)
+                    }}
+                    className="text-sm text-[#8E8E93] hover:text-[#1A1A1A] transition-colors cursor-pointer text-left block w-full truncate"
+                  >
+                    {song.artist}
+                  </button>
+                </div>
 
-                <div className="flex flex-wrap gap-2 mb-6">
+                <div className="flex flex-wrap gap-2 mb-8">
                   {song.tags.slice(0, 2).map((tag) => (
                     <Badge
                       key={tag}
                       variant="secondary"
-                      className="bg-orange-50 text-orange-700 hover:bg-orange-100 border-none px-3 py-1 rounded-full text-xs font-medium cursor-pointer"
+                      className="bg-[#FFF8F4] text-[#B85C24] border-none px-2.5 py-0.5 rounded-full text-[11px] font-medium cursor-pointer hover:bg-[#FFEFD5] transition-colors"
                       onClick={(e) => {
                         e.stopPropagation()
                         onTagClick?.(tag)
@@ -490,10 +492,10 @@ export function Library({
                   ))}
                 </div>
 
-                <div className="pt-4 border-t border-border/40 flex items-center justify-between">
+                <div className="mt-auto pt-4 border-t border-border/30 flex items-center justify-between">
                   <Badge
                     variant="secondary"
-                    className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-none px-4 py-1 rounded-full text-sm font-medium cursor-pointer"
+                    className="bg-[#E9F9EF] text-[#2D8A4E] border-none px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer hover:bg-[#D4F4DF] transition-colors"
                     onClick={(e) => {
                       e.stopPropagation()
                       onKeyClick?.(song.key)
@@ -501,10 +503,10 @@ export function Library({
                   >
                     {song.key}
                   </Badge>
-                  <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
-                    <Eye className="w-4 h-4" />
-                    21,340
-                  </span>
+                  <div className="flex items-center gap-1.5 text-[#8E8E93] text-[12px] font-medium">
+                    <Eye className="w-4 h-4 opacity-60" />
+                    <span>21,340</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
