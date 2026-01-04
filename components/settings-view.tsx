@@ -4,13 +4,16 @@ import { Download, Upload, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import type { Song, Folder } from "@/lib/types"
+import { saveSongs, saveFolders } from "@/lib/storage"
 
 interface SettingsViewProps {
   songs: Song[]
   folders: Folder[]
+  onDataImported?: (songs: Song[], folders: Folder[]) => void
+  onDataCleared?: () => void
 }
 
-export function SettingsView({ songs, folders }: SettingsViewProps) {
+export function SettingsView({ songs, folders, onDataImported, onDataCleared }: SettingsViewProps) {
   const handleExportData = () => {
     const data = {
       songs,
@@ -22,28 +25,39 @@ export function SettingsView({ songs, folders }: SettingsViewProps) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = `guitar-tabs-backup-${new Date().toISOString().split("T")[0]}.json`
+    a.download = `cifrapobre-backup-${new Date().toISOString().split("T")[0]}.json`
     a.click()
     URL.revokeObjectURL(url)
   }
 
-  const handleImportData = () => {
+  const handleImportData = async () => {
     const input = document.createElement("input")
     input.type = "file"
     input.accept = ".json"
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]
       if (!file) return
 
       const reader = new FileReader()
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         try {
           const data = JSON.parse(e.target?.result as string)
-          localStorage.setItem("guitar-tabs-songs", JSON.stringify(data.songs || []))
-          localStorage.setItem("guitar-tabs-folders", JSON.stringify(data.folders || []))
-          alert("Data imported successfully! Please refresh the page.")
+          const importedSongs: Song[] = data.songs || []
+          const importedFolders: Folder[] = data.folders || []
+
+          // Salva no Supabase (ou localStorage como fallback)
+          await saveSongs(importedSongs)
+          await saveFolders(importedFolders)
+
+          // Atualiza o estado do componente pai
+          if (onDataImported) {
+            onDataImported(importedSongs, importedFolders)
+          }
+
+          alert("Dados importados com sucesso!")
         } catch (error) {
-          alert("Failed to import data. Invalid file format.")
+          console.error("Erro ao importar dados:", error)
+          alert("Falha ao importar dados. Formato de arquivo inválido.")
         }
       }
       reader.readAsText(file)
@@ -51,11 +65,23 @@ export function SettingsView({ songs, folders }: SettingsViewProps) {
     input.click()
   }
 
-  const handleClearData = () => {
-    if (confirm("Are you sure you want to delete all songs and folders? This cannot be undone.")) {
-      localStorage.removeItem("guitar-tabs-songs")
-      localStorage.removeItem("guitar-tabs-folders")
-      alert("All data cleared! Please refresh the page.")
+  const handleClearData = async () => {
+    if (confirm("Tem certeza que deseja deletar todas as músicas e pastas? Esta ação não pode ser desfeita.")) {
+      try {
+        // Salva arrays vazios no Supabase (ou localStorage como fallback)
+        await saveSongs([])
+        await saveFolders([])
+
+        // Atualiza o estado do componente pai
+        if (onDataCleared) {
+          onDataCleared()
+        }
+
+        alert("Todos os dados foram limpos!")
+      } catch (error) {
+        console.error("Erro ao limpar dados:", error)
+        alert("Erro ao limpar dados. Tente novamente.")
+      }
     }
   }
 
@@ -77,7 +103,7 @@ export function SettingsView({ songs, folders }: SettingsViewProps) {
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground justify-start"
             >
               <Download className="w-4 h-4 mr-2" />
-              Export Library (JSON)
+              Exportar Biblioteca (JSON)
             </Button>
             <Button
               onClick={handleImportData}
@@ -85,7 +111,7 @@ export function SettingsView({ songs, folders }: SettingsViewProps) {
               className="w-full border-border text-muted-foreground hover:bg-accent justify-start bg-transparent"
             >
               <Upload className="w-4 h-4 mr-2" />
-              Import Library
+              Importar Biblioteca
             </Button>
             <Button
               onClick={handleClearData}
@@ -93,7 +119,7 @@ export function SettingsView({ songs, folders }: SettingsViewProps) {
               className="w-full border-destructive text-destructive hover:bg-destructive/10 justify-start bg-transparent"
             >
               <Trash2 className="w-4 h-4 mr-2" />
-              Clear All Data
+              Limpar Todos os Dados
             </Button>
           </CardContent>
         </Card>

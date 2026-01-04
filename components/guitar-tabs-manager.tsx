@@ -11,11 +11,13 @@ import { TopBar } from "./top-bar"
 import { FolderView } from "./folder-view"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import type { Song, Folder } from "@/lib/types"
-import { getMockSongs, saveSongs, loadSongs, saveFolders, loadFolders } from "@/lib/storage"
+import { getMockSongs, saveSongs, loadSongs, saveFolders, loadFolders, migrateGuestDataToUser } from "@/lib/storage"
+import { useAuth } from "@/hooks/use-auth"
 
 export function GuitarTabsManager() {
   const [songs, setSongs] = useState<Song[]>([])
   const [folders, setFolders] = useState<Folder[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [currentView, setCurrentView] = useState<
     "home" | "library" | "favorites" | "folders" | "add" | "settings" | "song" | "folder-detail"
   >("home")
@@ -27,31 +29,84 @@ export function GuitarTabsManager() {
     artist: "",
     key: "",
   })
+  const { user, loading: authLoading } = useAuth()
+
+  // Migrar dados do guest para user quando usuário faz login
+  useEffect(() => {
+    async function handleUserLogin() {
+      if (user?.id && !authLoading) {
+        await migrateGuestDataToUser(user.id)
+        // Recarregar dados após migração
+        const loadedSongs = await loadSongs()
+        const loadedFolders = await loadFolders()
+        setSongs(loadedSongs)
+        setFolders(loadedFolders)
+      }
+    }
+    handleUserLogin()
+  }, [user?.id, authLoading])
 
   useEffect(() => {
-    const loadedSongs = loadSongs()
-    const loadedFolders = loadFolders()
+    async function loadData() {
+      setIsLoading(true)
+      try {
+        const loadedSongs = await loadSongs()
+        const loadedFolders = await loadFolders()
 
-    if (loadedSongs.length === 0) {
-      const mockSongs = getMockSongs()
-      setSongs(mockSongs)
-      saveSongs(mockSongs)
-    } else {
-      // Garantir que não existam IDs duplicados nos dados carregados
-      const uniqueSongs = Array.from(new Map(loadedSongs.map(s => [s.id, s])).values())
-      setSongs(uniqueSongs)
+        if (loadedSongs.length === 0) {
+          const mockSongs = getMockSongs()
+          setSongs(mockSongs)
+          await saveSongs(mockSongs)
+        } else {
+          // Garantir que não existam IDs duplicados nos dados carregados
+          const uniqueSongs = Array.from(new Map(loadedSongs.map(s => [s.id, s])).values())
+          setSongs(uniqueSongs)
+        }
+
+        setFolders(loadedFolders)
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    setFolders(loadedFolders)
+    loadData()
   }, [])
 
   useEffect(() => {
-    if (songs.length > 0) saveSongs(songs)
-  }, [songs])
+    // Evita salvar durante o carregamento inicial
+    if (isLoading) return
+
+    async function persistSongs() {
+      try {
+        await saveSongs(songs)
+      } catch (error) {
+        console.error("Erro ao salvar músicas:", error)
+      }
+    }
+
+    if (songs.length > 0) {
+      persistSongs()
+    }
+  }, [songs, isLoading])
 
   useEffect(() => {
-    if (folders.length > 0) saveFolders(folders)
-  }, [folders])
+    // Evita salvar durante o carregamento inicial
+    if (isLoading) return
+
+    async function persistFolders() {
+      try {
+        await saveFolders(folders)
+      } catch (error) {
+        console.error("Erro ao salvar pastas:", error)
+      }
+    }
+
+    if (folders.length > 0) {
+      persistFolders()
+    }
+  }, [folders, isLoading])
 
   const handleAddSong = (song: Song) => {
     setSongs([...songs, song])
@@ -150,6 +205,17 @@ export function GuitarTabsManager() {
   }, [selectedFolder, folders, songs])
 
   const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Carregando dados...</p>
+          </div>
+        </div>
+      )
+    }
+
     switch (currentView) {
       case "home":
         return (
@@ -249,7 +315,20 @@ export function GuitarTabsManager() {
           />
         ) : null
       case "settings":
-        return <SettingsView songs={songs} folders={folders} />
+        return (
+          <SettingsView
+            songs={songs}
+            folders={folders}
+            onDataImported={(importedSongs, importedFolders) => {
+              setSongs(importedSongs)
+              setFolders(importedFolders)
+            }}
+            onDataCleared={() => {
+              setSongs([])
+              setFolders([])
+            }}
+          />
+        )
       default:
         return null
     }

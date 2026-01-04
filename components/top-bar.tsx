@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Search, Bell, Music, Menu, Plus, Settings } from "lucide-react"
+import { Search, Bell, Music, Menu, Plus, Settings, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "./theme-toggle"
@@ -12,9 +12,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu"
 import type { Song } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/hooks/use-auth"
+import { AuthDialog } from "./auth-dialog"
 
 interface TopBarProps {
   onSearch?: (query: string) => void
@@ -31,10 +35,16 @@ export function TopBar({ onSearch, onNavigateHome, onNavigate, currentView, song
   const [searchQuery, setSearchQuery] = useState("")
   const [mounted, setMounted] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [authDialogOpen, setAuthDialogOpen] = useState(false)
+  const { user, loading: authLoading, signOut } = useAuth()
   
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  const handleSignOut = async () => {
+    await signOut()
+  }
 
   const suggestions = searchQuery.trim() 
     ? songs.filter(s => 
@@ -144,10 +154,60 @@ export function TopBar({ onSearch, onNavigateHome, onNavigate, currentView, song
           <Plus className="w-5 h-5" />
         </Button>
         <ThemeToggle />
-        <Button variant="ghost" size="icon" className="text-muted-foreground">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="text-muted-foreground"
+          onClick={() => onNavigate?.("settings")}
+        >
           <Settings className="w-5 h-5" />
         </Button>
+        
+        {/* Auth Button */}
+        {!authLoading && (
+          user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-muted-foreground">
+                  <User className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-card border-border">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">Conta</p>
+                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-muted-foreground"
+              onClick={() => setAuthDialogOpen(true)}
+              title="Fazer login"
+            >
+              <User className="w-5 h-5" />
+            </Button>
+          )
+        )}
       </div>
+
+      <AuthDialog 
+        open={authDialogOpen} 
+        onOpenChange={setAuthDialogOpen}
+        onAuthSuccess={() => {
+          // Recarregar dados após autenticação bem-sucedida
+          window.location.reload()
+        }}
+      />
     </header>
   )
 }

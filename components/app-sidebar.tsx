@@ -1,11 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { Home, Music, Heart, Folder, Plus, Settings, LogOut, ChevronDown, HelpCircle, User } from "lucide-react"
-import { useTheme } from "next-themes"
+import { Home, Music, Heart, Folder, Plus } from "lucide-react"
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarFooter, useSidebar, } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 
 const navigationItems = [
   {
@@ -49,22 +46,17 @@ export function AppSidebar({ currentView, onNavigate, ...props }: AppSidebarProp
     setMounted(true)
   }, [])
 
-  const mockUser = {
-    name: "Usuário Mock",
-    email: "user@example.com",
-  }
-
   if (!mounted) {
     return (
       <Sidebar collapsible="icon" {...props}>
         <SidebarHeader className="border-b border-sidebar-border h-16 flex items-center justify-center px-4 group-data-[collapsible=icon]:px-2">
           <div className="flex items-center gap-2 font-bold text-primary">
             <Music className="size-6" />
-            <span className="group-data-[collapsible=icon]:hidden">ChordMaster</span>
+            <span className="group-data-[collapsible=icon]:hidden">CifraPobre</span>
           </div>
         </SidebarHeader>
         <SidebarContent />
-        <SidebarFooter className="border-t border-sidebar-border p-2 group-data-[collapsible=icon]:p-0" />
+        <SidebarFooter className="p-2 group-data-[collapsible=icon]:p-0" />
       </Sidebar>
     )
   }
@@ -72,10 +64,10 @@ export function AppSidebar({ currentView, onNavigate, ...props }: AppSidebarProp
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="border-b border-sidebar-border h-16 flex items-center justify-center px-4 group-data-[collapsible=icon]:px-2">
-        {/* Logo ChordMaster */}
+        {/* Logo CifraPobre */}
         <div className="flex items-center gap-2 font-bold text-primary">
           <Music className="size-6" />
-          <span className="group-data-[collapsible=icon]:hidden">ChordMaster</span>
+          <span className="group-data-[collapsible=icon]:hidden">CifraPobre</span>
         </div>
       </SidebarHeader>
       <SidebarContent className="justify-start">
@@ -101,45 +93,7 @@ export function AppSidebar({ currentView, onNavigate, ...props }: AppSidebarProp
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border p-2 group-data-[collapsible=icon]:p-0">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            {/* User Profile Row - Agora é o Trigger */}
-            <div 
-              className="flex items-center gap-2 p-2 hover:bg-sidebar-accent cursor-pointer transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-3 group-data-[collapsible=icon]:h-12 group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:rounded-none rounded-md"
-              role="button"
-              tabIndex={0}
-            >
-              <div className="bg-primary text-primary-foreground flex size-8 shrink-0 items-center justify-center rounded-md">
-                <User className="size-4 mx-auto" />
-              </div>
-              <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                <p className="text-sm font-medium truncate">{mockUser.name}</p>
-                <p className="text-xs text-muted-foreground truncate">{mockUser.email}</p>
-              </div>
-              <ChevronDown className="size-4 text-muted-foreground shrink-0 group-data-[collapsible=icon]:hidden" />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" side="top" sideOffset={8} className="w-56">
-            {/* Item: Configurações */}
-            <DropdownMenuItem onClick={() => onNavigate("settings")}>
-              <Settings className="size-4 mr-2" />
-              Configurações
-            </DropdownMenuItem>
-            {/* Item: Ajuda */}
-            <DropdownMenuItem>
-              <HelpCircle className="size-4 mr-2" />
-              Ajuda
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {/* Item: Sair */}
-            <DropdownMenuItem onClick={() => console.log("Logout")} className="text-destructive">
-              <LogOut className="size-4 mr-2" />
-              Sair
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarFooter>
+      <SidebarFooter className="p-2 group-data-[collapsible=icon]:p-0" />
       <SidebarRail />
     </Sidebar>
   )

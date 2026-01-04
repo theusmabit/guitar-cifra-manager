@@ -10,8 +10,8 @@ const inter = Inter({ subsets: ["latin"] })
 const robotoMono = Roboto_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Guitar Tabs & Chords Manager",
-  description: "Personal dashboard for managing guitar tabs and chords",
+  title: "CifraPobre",
+  description: "Gerencie suas cifras e tablaturas de forma simples",
   generator: "v0.app",
   icons: {
     icon: [
